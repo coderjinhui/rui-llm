@@ -31,6 +31,7 @@ class DocConvertor:
         """
         self.image_folder = image_folder
         os.makedirs(image_folder, exist_ok=True)
+        self.images = []
     
     def _save_image(self, image_data: bytes, extension: str = '.png') -> str:
         """保存图片并返回文件路径
@@ -48,10 +49,10 @@ class DocConvertor:
         
         with open(image_path, 'wb') as f:
             f.write(image_data)
-        
+        self.images.append(image_path)
         return image_path
-    
-    def convert_docx(self, file_path: str) -> str:
+
+    def __convert_docx(self, file_path: str) -> str:
         """将Word文档转换为Markdown
         
         Args:
@@ -78,8 +79,8 @@ class DocConvertor:
                 markdown.append(f"![image]({image_path})\n")
         
         return '\n'.join(markdown)
-    
-    def convert_xlsx(self, file_path: str) -> str:
+
+    def __convert_xlsx(self, file_path: str) -> str:
         """将Excel文件转换为Markdown表格
         
         Args:
@@ -119,8 +120,8 @@ class DocConvertor:
             markdown.append('\n')
         
         return '\n'.join(markdown)
-    
-    def convert_pptx(self, file_path: str) -> str:
+
+    def __convert_pptx(self, file_path: str) -> str:
         """将PPT文件转换为Markdown
         
         Args:
@@ -145,8 +146,8 @@ class DocConvertor:
                     markdown.append(f"![image]({image_path})\n")
         
         return '\n'.join(markdown)
-    
-    def convert_pdf(self, file_path: str) -> str:
+
+    def __convert_pdf(self, file_path: str) -> str:
         """将PDF文件转换为Markdown
         
         Args:
@@ -172,8 +173,8 @@ class DocConvertor:
                 markdown.append(f"![image]({image_path})\n")
         
         return '\n'.join(markdown)
-    
-    def convert_html(self, file_path: str) -> str:
+
+    def __convert_html(self, file_path: str) -> str:
         """将HTML文件转换为Markdown
         
         Args:
@@ -217,7 +218,7 @@ class DocConvertor:
         """根据文件类型调用相应的转换方法
         
         Args:
-            file_path: 文件路径
+            file_path: 文件路径, 支持docx、xlsx、pptx、pdf、html
             
         Returns:
             str: 转换后的Markdown文本
@@ -225,19 +226,22 @@ class DocConvertor:
         ext = Path(file_path).suffix.lower()
         
         converters = {
-            '.docx': self.convert_docx,
-            '.xlsx': self.convert_xlsx,
-            '.pptx': self.convert_pptx,
-            '.pdf': self.convert_pdf,
-            '.html': self.convert_html,
-            '.htm': self.convert_html
+            '.docx': self.__convert_docx,
+            '.xlsx': self.__convert_xlsx,
+            '.pptx': self.__convert_pptx,
+            '.pdf': self.__convert_pdf,
+            '.html': self.__convert_html,
+            '.htm': self.__convert_html
         }
-        
+        self.images = []
         converter = converters.get(ext)
         if not converter:
             raise ValueError(f"Unsupported file type: {ext}")
         
         return converter(file_path)
+
+    def get_images(self) -> List[str]:
+        return self.images
 
 c = DocConvertor()
 text = c.convert("test3.xlsx")
