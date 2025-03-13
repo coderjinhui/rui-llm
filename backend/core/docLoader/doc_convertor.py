@@ -243,7 +243,15 @@ class DocConvertor:
     def get_images(self) -> List[str]:
         return self.images
 
-c = DocConvertor()
-text = c.convert("test3.xlsx")
-docs = splitter.split_text(text)
-print(docs)
+from langchain_ollama import OllamaEmbeddings
+from langchain.chains import ConversationalRetrievalChain
+# print(dir(ConversationalRetrievalChain))
+# ConversationalRetrievalChain().invoke
+# embed = OllamaEmbeddings(
+#     model="llama3"
+# )
+
+
+# docs = splitter.split_text(text)
+# embed.embed_documents(docs)
+# print(docs)
